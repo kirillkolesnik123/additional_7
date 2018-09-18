@@ -1,60 +1,27 @@
 module.exports = function solveSudoku(matrix) {
-  // your solution
-    for (var i = 0; i <= 8; i++)
-    {
-        for (var j = 0; j <= 8; j++)
-        {
-            if (matrix[i][j] !== 0)
-            {
-                continue;
-            }
-            for (var k = 1; k <= 9; k++)
-            {
-                if (insertar(matrix, i, j, k) === true)
-                {
-                    matrix[i][j] = k;
-                    var b = solveSudoku(matrix);
-                    if (b == true)
-                    {
-                        return true;
-                    }
-                    matrix[i][j] = 0;
+    let arr = [];
+    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (!matrix[row][col]) {
+                let blockPositionRow = Math.floor(row / 3) * 3;
+                let blockPositionCol = Math.floor(col / 3) * 3;
+                for (let i = 0; i < 9; i++) {
+                    arr.push(matrix[blockPositionRow + i % 3][blockPositionCol + Math.floor(i / 3)]);
+                    arr.push(matrix[row][i]);
+                    arr.push(matrix[i][col]);
                 }
-            }
-            return false;
-        }
-    }
-    return true;
-};
-function insertar(matrix, i, j, k)
-{
-    for (var a = 0; a <= 8; a++)
-    {
-        if (a != i && matrix[a][j] == k)
-        {
-            return false;
-        }
-    }
-    for (var a = 0; a <= 8; a++)
-    {
-        if (a != j && matrix[i][a] == k){
-            return false;
-        }
-    }
-    var y = Math.floor((i / 3)) * 3;
-    var x = Math.floor((j / 3)) * 3;
-    for (var a = 0; a < 3; a++)
-    {
-        for (var b = 0; b < 3; b++)
-        {
-            if (a != i && b != j && matrix[y + a][x + b] == k)
-            {
+                arr.filter(number => number > 0);
+
+                let possible = numbers.filter(number => arr.indexOf(number) < 0);
+                for (let i = 0; i < possible.length; i++) {
+                    matrix[row][col] = possible[i];
+                    if (solveSudoku(matrix)) return solveSudoku(matrix);
+                }
+                matrix[row][col] = 0;
                 return false;
             }
         }
     }
-    return true;
- 
-
+    return matrix;
 }
-
